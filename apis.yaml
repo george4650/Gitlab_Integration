@@ -1,0 +1,119 @@
+title: GitLab Api
+description: |
+  Сервис для взаимодействия с GitLab.
+  ### Стандартные ошибки, общие для всех API:
+  - статус 400, ошибка валидации входных параметров;
+  - статус 401, ошибка проверки авторизации запроса;
+  - статус 403, нет прав доступа;
+  - статус 500, ошибка сервиса.
+
+  Тело ошибок представлено в формате
+  ```json
+  {
+    "errors": [
+      {
+        "error": "error_code",
+        "message": "error message to user",
+        "detail": "some error details data"
+      }
+    ]
+  }
+  ```
+
+httpApis:
+  - title: Регистрация пользователя
+    api: post|api/gitlab/add_user
+    auth_type: basic+e
+    body:
+      structure_name: Data
+      schema:
+        - type_name: Data
+          fields:
+            - Name: FirstName
+              Type: string
+              Tag: 'json:"first_name" binding:"required,max=50"'
+            - Name: LastName
+              Type: string
+              Tag: 'json:"last_name" binding:"required,max=50"'
+            - Name: UserName
+              Type: string
+              Tag: 'json:"user_name" binding:"required,max=110"'
+            - Name: Email
+              Type: string
+              Tag: 'json:"email" binding:"required,email"'
+    do: CUSTOM|Registration|BODY
+    responses:
+      - code: 200
+        description: успешный результат
+      - code: 400
+        description: ошибка валидации данных
+
+  - title: Получить список пользователей
+    api: GET|api/gitlab/get_users
+    auth_type: basic+e
+    query:
+      type_name: Query
+      fields:
+        - Name: Page
+          Type: int64
+          Tag: uri:"page" binding:"required,gt=0,lte=500"
+        - Name: Search
+          Type: "*string"
+          Tag: uri:"search" binding:"omitempty,max=100"
+        - Name: Username
+          Type: "*string"
+          Tag: uri:"username" binding:"omitempty,max=100"
+        - Name: OrderBy
+          Type: "*string"
+          Tag: uri:"order_by" binding:"omitempty,oneof=id name username created_at"
+        - Name: Sort
+          Type: "*string"
+          Tag: uri:"sort" binding:"omitempty,oneof=asc desc"
+        - Name: Blocked
+          Type: "*bool"
+          Tag: uri:"blocked" binding:"omitempty"
+        - Name: Admins
+          Type: "*bool"
+          Tag: uri:"admins" binding:"omitempty"
+    do: CUSTOM|ListUsers|page;search;username;order_by;sort;blocked;admins
+    responses:
+      - code: 200
+        description: успешный результат
+
+  - title: Получить пользователя по ID
+    api: GET|api/gitlab/get_user
+    auth_type: basic+e
+    query:
+      type_name: Query
+      fields:
+        - Name: ID
+          Type: int64
+          Tag: uri:"id" binding:"required,gt=0,lte=10000"
+    do: CUSTOM|GetUser|id
+    responses:
+      - code: 200
+        description: успешный результат
+
+  - title: Блокировка пользователя
+    api: POST|api/gitlab/block_user
+    auth_type: basic+e
+    body:
+      structure_name: Data
+      schema:
+        - type_name: Data
+          fields:
+            - Name: ID
+              Type: int64
+              Tag: 'json:"id" binding:"required,gt=0,lte=10000"'
+    do: CUSTOM|BlockUser|BODY
+    responses:
+      - code: 204
+        description: успешный результат
+
+  - title: Проверить валиден ли access token gitlab
+    api: GET|api/gitlab/check_valid_token
+    auth_type: basic+e
+    do: CUSTOM|CheckValidToken
+    responses:
+      - code: 204
+        description: успешный результат

@@ -1,0 +1,35 @@
+### STATUS 200
+GET localhost:8080/api/gitlab/get_users?page=1&employee_id=1029871
+Content-Type: application/json
+Authorization: Basic admin test
+
+### STATUS 200
+POST localhost:8080/api/gitlab/add_user?employee_id=1029871
+Content-Type: application/json
+Authorization: Basic admin test
+
+{
+  "user_name": "mylonskiy.vladimir23",
+  "first_name": "Мылонский",
+  "last_name": "Владимир",
+  "email": "mylonskiy.vladimir23@wildberries.work"
+}
+
+### STATUS 200
+GET localhost:8080/api/gitlab/get_user?id=2&employee_id=1029871
+Content-Type: application/json
+Authorization: Basic admin test
+
+### STATUS 204
+POST localhost:8080/api/gitlab/block_user?employee_id=1029871
+Content-Type: application/json
+Authorization: Basic admin test
+
+{
+  "id": 3
+}
+
+### STATUS 204
+GET localhost:8080/api/gitlab/check_valid_token?employee_id=1029871
+Content-Type: application/json
+Authorization: Basic admin test

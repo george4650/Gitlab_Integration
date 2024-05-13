@@ -1,0 +1,28 @@
+{
+  "urls": [
+    "https://wh-hard01.kol.wb.ru"
+  ],
+  "auth": {
+    "type": "without",
+    "headers": {
+      "Content-Type": "application/json",
+      "PRIVATE-TOKEN": "{{git_access_token}}"
+    }
+  },
+  "apis": {
+    "check_token": "/api/v4/user"
+  },
+  "auth_for_apis": {
+    "check_token": {
+      "type": "bearer",
+      "bearer": "{{git_access_token}}",
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    }
+  },
+
+  "insecure_skip_verify": true,
+  "response_timeout": "10s",
+  "retry_count": 2
+}
